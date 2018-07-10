@@ -33,7 +33,7 @@ All cluster settings can be :ref:`queried at runtime <sys-cluster-settings>`.
 .. contents::
    :local:
 
-.. _conf-cluster-basics:
+.. _conf-cluster-general:
 
 General
 =======
@@ -296,8 +296,6 @@ Metadata Gateway
 Discovery
 ---------
 
-.. _conf-discovery-op-params:
-
 .. _discovery.zen.minimum_master_nodes:
 
 ``discovery.zen.minimum_master_nodes`` : (default: ``1``; runtime: yes)
@@ -323,7 +321,7 @@ Discovery
    Multicast used to be an option for node discovery, but was deprecated in
    CrateDB 1.0.3 and removed in CrateDB 1.1.
 
-.. _conf-unicast-discovery:
+.. _conf-unicast:
 
 Unicast
 .......
@@ -355,7 +353,7 @@ is re-elected (see `Cluster Meta Data`).
 
 See also: `Discovery`_.
 
-.. _conf-dns-discovery:
+.. _conf-dns:
 
 DNS
 ...
@@ -390,7 +388,7 @@ would result in a list of discovery nodes ordered like::
 
   Optionally a custom port can be specified using the format ``hostname:port``.
 
-.. _conf-ec2-discovery:
+.. _conf-ec2:
 
 Amazon EC2
 ..........
@@ -451,7 +449,7 @@ Following settings control the discovery:
   If you have your own compatible implementation of the EC2 API service you can
   set the endpoint that should be used.
 
-.. _conf-azure-discovery:
+.. _conf-azure:
 
 Microsoft Azure
 ...............
@@ -535,8 +533,6 @@ Allocation
    when ``cluster.routing.allocation.enable`` is set to ``none``, nodes will
    recover their unassigned local primary shards immediatelly after restart.
 
-.. _conf-allocation-balancing:
-
 All these values are relative to one another. The first three are used to
 compose a three separate weighting functions into one. The cluster is balanced
 when no allowed action can bring the weights of each node closer together by
@@ -611,10 +607,10 @@ By default, the cluster will retrieve information about the disk usage of the
 nodes every 30 seconds. This can also be changed by setting the
 `cluster.info.update.interval`_ setting.
 
+.. _conf-allocation-attrs:
+
 Node Attributes
 ...............
-
-.. _conf-allocation-awareness:
 
 Cluster allocation awareness allows to configure shard and replicas allocation
 across generic attributes associated with nodes.
@@ -671,6 +667,8 @@ specific IP addresses or custom attributes.
   to allocate a shard on it. This is in contrast to include which will include
   a node if ANY rule matches.
 
+.. _conf-rebalancing:
+
 Rebalancing
 -----------
 
@@ -702,6 +700,8 @@ Rebalancing
 
 ``cluster.routing.allocation.cluster_concurrent_rebalance`` : (default: ``2``; runtime: yes)
   Define how many concurrent rebalancing tasks are allowed cluster wide.
+
+.. _conf-recovery:
 
 Recovery
 --------
@@ -757,6 +757,8 @@ Recovery
   Recoveries that don't show any activity for more then this interval will
   fail. Defaults to :ref:`internal_action_long_timeout
   <indices.recovery.internal_action_long_timeout>`.
+
+.. _conf-shutdown:
 
 Shutdown Behavior
 -----------------
@@ -821,10 +823,12 @@ nodes of the cluster:
   runs into the timeout which is specified with the
   `cluster.graceful_stop.timeout`_ setting.
 
+.. _conf-limits:
+
 Resource Limits
 ===============
 
-.. _conf-node-func-query-limits:
+.. _conf-request-limits:
 
 Requests
 --------
@@ -852,8 +856,12 @@ resources. The following settings change the behaviour of those queries.
   Defines the timeout of internal shard-based requests involved in the
   execution of SQL DML Statements over a huge amount of rows.
 
+.. _conf-circuit-breakers:
+
 Circuit Breakers
 ----------------
+
+.. _conf-query-breaker:
 
 .. rubric:: Queries
 
@@ -872,6 +880,8 @@ keeps working.
   A constant that all data estimations are multiplied with to determine a final
   estimation.
 
+.. _conf-field-breaker:
+
 .. rubric:: Field Data
 
 The field data circuit breaker allows estimation of needed heap memory required
@@ -884,6 +894,8 @@ is raised.
 ``indices.breaker.fielddata.overhead`` : (default: ``1.03``; runtime: yes)
   A constant that all field data estimations are multiplied with to determine a
   final estimation.
+
+.. _conf-request-breaker:
 
 .. rubric:: Requests
 
@@ -898,7 +910,7 @@ exception is raised.
   A constant that all request estimations are multiplied with to determine a
   final estimation.
 
-.. _stats.breaker.log:
+.. _conf-circuit-breaker:
 
 .. rubric:: Statistics
 
@@ -927,6 +939,8 @@ each of them, the breaker limit can be set.
   error message and clears the :ref:`sys.operations_log <sys-logs>` table
   completely.
 
+.. _conf-thread-pools:
+
 Thread Pools
 ------------
 
@@ -944,6 +958,8 @@ are proportional to the workload.
 If the type of a thread pool is set to ``fixed`` there are a few optional
 settings.
 
+.. _conf-index-pool:
+
 .. rubric:: Index
 
 For index/delete operations.
@@ -957,6 +973,8 @@ For index/delete operations.
 ``thread_pool.index.queue_size`` : (default: ``200``; runtime: no)
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
+
+.. _conf-search-pool:
 
 .. rubric:: Search
 
@@ -972,6 +990,8 @@ For count/search operations
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
+.. _conf-get-pool:
+
 .. rubric:: Get
 
 For queries that are optimized to do a direct lookup by primary key.
@@ -986,6 +1006,8 @@ For queries that are optimized to do a direct lookup by primary key.
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
+.. _conf-bulk-pool:
+
 .. rubric:: Bulk
 
 For bulk operations
@@ -999,6 +1021,8 @@ For bulk operations
 ``thread_pool.bulk.queue_size`` : (default: ``50``; runtime: no)
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
+
+.. _conf-refresh-pool:
 
 .. rubric:: Refresh
 
