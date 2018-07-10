@@ -33,10 +33,12 @@ All cluster settings can be :ref:`queried at runtime <sys-cluster-settings>`.
 .. contents::
    :local:
 
-Basics
-======
+.. _conf-cluster-basics:
 
-.. _conf-node-basics-license:
+General
+=======
+
+.. _conf-license:
 
 License
 -------
@@ -46,7 +48,7 @@ License
 ``license.enterprise``: (default: ``true``; runtime: no)
   Setting this to ``false`` disables the `Enterprise Edition`_ of CrateDB.
 
-.. _conf_usage_data_collector:
+.. _update-interval:
 
 Update Interval
 ---------------
@@ -57,7 +59,7 @@ Update Interval
   Defines how often the cluster collect metadata information (e.g. disk usages
   etc.) if no concrete  event is triggered.
 
-.. _conf_collecting_stats:
+.. _conf-statistics:
 
 Statistics
 ----------
@@ -185,6 +187,8 @@ Statistics
 
     Using a very small value can cause a high load on the cluster.
 
+.. _conf-udc:
+
 Usage Data Collector
 --------------------
 
@@ -192,14 +196,14 @@ The settings of the Usage Data Collector are read-only and cannot be set during
 runtime. Please refer to :ref:`usage_data_collector` to get further information
 about its usage.
 
-.. _udc_enabled:
+.. _udc.enabled:
 
 ``udc.enabled`` : (default: ``true``; runtime: no)
   ``true``: Enables the Usage Data Collector.
 
   ``false``: Disables the Usage Data Collector.
 
-.. _cluster.udc.initial_delay:
+.. _udc.initial_delay:
 
 ``udc.initial_delay`` : (default: ``10m``; runtime: no)
   The delay for first ping after start-up.
@@ -208,7 +212,7 @@ about its usage.
   as a string literal with a time suffix (``ms``, ``s``, ``m``, ``h``, ``d``,
   ``w``).
 
-.. _cluster.udc.interval:
+.. _udc.interval:
 
 ``udc.interval`` : (default: ``24h``; runtime: no)
   The interval a UDC ping is sent.
@@ -217,21 +221,24 @@ about its usage.
   as a string literal with a time suffix (``ms``, ``s``, ``m``, ``h``, ``d``,
   ``w``).
 
-.. _cluster.udc.url:
+.. _udc.url:
 
 ``udc.url`` : (default: ``https://udc.crate.io``; runtime: no)
   The URL the ping is sent to.
 
+.. _conf-cluster-features:
+
 Features
 ========
+
+.. _conf-proc-langs:
 
 Procedural Languages
 --------------------
 
-.. _conf-node-lang-js:
+.. _conf-js:
 
-JavaScript
-..........
+.. rubric:: JavaScript
 
 .. _lang.js.enabled:
 
@@ -243,10 +250,12 @@ JavaScript
 
       This is an :ref:`enterprise feature <enterprise_features>`.
 
+.. _cluster-setup:
+
 Cluster Setup
 =============
 
-.. _metadata_gateway:
+.. _metadata-gateway:
 
 Metadata Gateway
 ----------------
@@ -282,10 +291,12 @@ Metadata Gateway
   started. However, the value must be bigger than the half of the expected
   number of nodes in the cluster.
 
-.. _conf_discovery:
+.. _conf-discovery:
 
 Discovery
 ---------
+
+.. _conf-discovery-op-params:
 
 .. _discovery.zen.minimum_master_nodes:
 
@@ -312,14 +323,16 @@ Discovery
    Multicast used to be an option for node discovery, but was deprecated in
    CrateDB 1.0.3 and removed in CrateDB 1.1.
 
-.. _conf_host_discovery:
+.. _conf-unicast-discovery:
 
-Unicast Host Discovery
-......................
+Unicast
+.......
 
 CrateDB has built-in support for several different mechanisms of node
 discovery. The simplest mechanism is to specify a list of hosts in the
 configuration file.
+
+.. _discovery.zen.ping.unicast.hosts:
 
 ``discovery.zen.ping.unicast.hosts`` : (default: none; runtime: no)
   TODO
@@ -335,15 +348,17 @@ unicast hosts for node discovery.
 The same lookup is also performed by all nodes in a cluster whenever the master
 is re-elected (see `Cluster Meta Data`).
 
+.. _discovery.zen.hosts_provider:
+
 ``discovery.zen.hosts_provider`` : (default: none; runtime: no)
   Allowed Values:* ``srv``, ``ec2``, ``azure``
 
 See also: `Discovery`_.
 
-.. _conf_dns_discovery:
+.. _conf-dns-discovery:
 
-Discovery via DNS
-`````````````````
+DNS
+...
 
 Crate has built-in support for discovery via DNS. To enable DNS discovery the
 ``discovery.zen.hosts_provider`` setting needs to be set to ``srv``.
@@ -359,10 +374,14 @@ would result in a list of discovery nodes ordered like::
 
     crate2.example.com:4300, crate3.example.com:4300, crate1.example.com:4300
 
+.. _discovery.srv.query:
+
 ``discovery.srv.query`` : (default: none; runtime: no)
   The DNS query that is used to look up SRV records, usually in the format
   ``_service._protocol.fqdn`` If not set, the service discovery will not be
   able to look up any SRV records.
+
+.. _discovery.srv.resolver:
 
 ``discovery.srv.resolver`` : (default: system; runtime: no)
   The hostname or IP of the DNS server used to resolve DNS records. If this is
@@ -371,47 +390,53 @@ would result in a list of discovery nodes ordered like::
 
   Optionally a custom port can be specified using the format ``hostname:port``.
 
-.. _conf_ec2_discovery:
+.. _conf-ec2-discovery:
 
-Discovery on Amazon EC2
-```````````````````````
+Amazon EC2
+..........
 
 CrateDB has built-in support for discovery via the EC2 API. To enable EC2
 discovery the ``discovery.zen.hosts_provider`` settings needs to be set to
 ``ec2``.
 
+.. _discovery.ec2.access_key:
+
 ``discovery.ec2.access_key`` : (default: none; runtime: no)
   The access key ID to identify the API calls.
+
+.. _discovery.ec2.secret_key:
 
 ``discovery.ec2.secret_key`` : (default; none; runtime: no)
   The secret key to identify the API calls.
 
 Following settings control the discovery:
 
-.. _discovery_ec2_groups:
+.. _discovery.ec2.groups:
 
 ``discovery.ec2.groups`` : (default: none; runtime: no)
   A list of security groups; either by ID or name. Only instances with the
   given group will be used for unicast host discovery.
 
+.. _discovery.ec2.any_group:
+
 ``discovery.ec2.any_group`` : (default: ``true``; runtime: no)
   Defines whether all (``false``) or just any (``true``) security group must
   be present for the instance to be used for discovery.
 
-.. _discovery_ec2_host_type:
+.. _discovery.ec2.host_type:
 
 ``discovery.ec2.host_type`` : (default: ``private_ip``; runtime: no)
   *Allowed Values:*  ``private_ip``, ``public_ip``, ``private_dns``, ``public_dns``
 
   Defines via which host type to communicate with other instances.
 
-.. _discovery_ec2_zones:
+.. _discovery.ec2.availability_zones:
 
 ``discovery.ec2.availability_zones`` : (default: none; runtime: no)
   A list of availability zones. Only instances within the given availability
   zone will be used for unicast host discovery.
 
-.. _discovery_ec2_tags:
+.. _discovery.ec2.tag:
 
 ``discovery.ec2.tag.<name>`` : (default: none; runtime: no)
   EC2 instances for discovery can also be filtered by tags using the
@@ -420,37 +445,51 @@ Following settings control the discovery:
   E.g. to filter instances that have the ``environment`` tags with the value
   ``dev`` your setting will look like: ``discovery.ec2.tag.environment: dev``.
 
+.. _discovery.ec2.endpoint:
+
 ``discovery.ec2.endpoint`` : (default: none; runtime: no)
   If you have your own compatible implementation of the EC2 API service you can
   set the endpoint that should be used.
 
-.. _conf_azure_discovery:
+.. _conf-azure-discovery:
 
-Discovery on Microsoft Azure
-````````````````````````````
+Microsoft Azure
+...............
 
 CrateDB has built-in support for discovery via the Azure Virtual Machine API.
 To enable Azure discovery set the ``discovery.zen.hosts_provider`` setting to
 ``azure``.
+
+.. _cloud.azure.management.resourcegroup.name:
 
 ``cloud.azure.management.resourcegroup.name`` : (default: none; runtime: no)
   The name of the resource group the CrateDB cluster is running on.
 
   All nodes need to be started within the same resource group.
 
+.. _cloud.azure.management.subscription.id:
+
 ``cloud.azure.management.subscription.id`` : (default: none; runtime: no)
   The subscription ID of your Azure account.
 
   You can find the ID on the `Azure Portal`_.
 
+.. _cloud.azure.management.tenant.id:
+
 ``cloud.azure.management.tenant.id`` : (default: none; runtime: no)
   The tenant ID of the `Active Directory application`_.
+
+.. _cloud.azure.management.app.id:
 
 ``cloud.azure.management.app.id`` : (default: none; runtime: no)
   The application ID of the `Active Directory application`_.
 
+.. _cloud.azure.management.app.secret:
+
 ``cloud.azure.management.app.secret`` : (default: none; runtime: no)
   The password of the `Active Directory application`_.
+
+.. _discovery.azure.method:
 
 ``discovery.azure.method`` : (default: ``vnet``; runtime: no)
   *Allowed Values:* ``vnet | subnet``
@@ -459,16 +498,15 @@ To enable Azure discovery set the ``discovery.zen.hosts_provider`` setting to
   same virtual network (default), ``subnet`` will discover all VMs within the
   same subnet of the CrateDB instance.
 
-.. _`Azure Portal`: https://portal.azure.com
-.. _`Active Directory application`: https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal-cli/#_create-ad-application-with-password
+.. _conf-data-mgmt:
 
 Data Management
 ===============
 
-.. _conf_routing:
+.. _conf-allocation:
 
-Routing Allocation
-------------------
+Allocation
+----------
 
 .. _cluster.routing.allocation.enable:
 
@@ -497,85 +535,7 @@ Routing Allocation
    when ``cluster.routing.allocation.enable`` is set to ``none``, nodes will
    recover their unassigned local primary shards immediatelly after restart.
 
-.. _cluster.routing.rebalance.enable:
-
-``cluster.routing.rebalance.enable`` : (default: ``all``; runtime: yes)
-  *Allowed Values:* ``all | none | primaries | replicas``
-
-  Enables/Disables rebalancing for different types of shards.
-
-  ``all`` allows shard rebalancing for all types of shards.
-
-  ``none`` disables shard rebalancing for any types.
-
-  ``primaries`` allows shard rebalancing only for primary shards.
-
-  ``replicas`` allows shard rebalancing only for replica shards.
-
-.. _cluster.routing.allocation.allow_rebalance:
-
-``cluster.routing.allocation.allow_rebalance`` : (default: ``indices_all_active``; runtime: yes)
-  *Allowed Values:* ``always | indices_primary_active | indices_all_active``
-
-  Allow to control when rebalancing will happen based on the total state of all
-  the indices shards in the cluster. Defaulting to ``indices_all_active`` to
-  reduce chatter during initial recovery.
-
-.. _cluster.routing.allocation.cluster_concurrent_rebalance:
-
-``cluster.routing.allocation.cluster_concurrent_rebalance`` : (default: ``2``; runtime: yes)
-  Define how many concurrent rebalancing tasks are allowed cluster wide.
-
-.. _cluster.routing.allocation.node_initial_primaries_recoveries:
-
-``cluster.routing.allocation.node_initial_primaries_recoveries`` : (default: ``4``; runtime: yes)
-  Define the number of initial recoveries of primaries that are allowed per
-  node. Since most times local gateway is used, those should be fast and we can
-  handle more of those per node without creating load.
-
-.. _cluster.routing.allocation.node_concurrent_recoveries:
-
-``cluster.routing.allocation.node_concurrent_recoveries`` : (default: ``2``; runtime: yes)
-  How many concurrent recoveries are allowed to happen on a node.
-
-.. _conf-routing-allocation-awareness:
-
-Awareness
-.........
-
-Cluster allocation awareness allows to configure shard and replicas allocation
-across generic attributes associated with nodes.
-
-.. _cluster.routing.allocation.awareness.attributes:
-
-``cluster.routing.allocation.awareness.attributes`` : (default: none; runtime: no)
-  Define node attributes which will be used to do awareness based on the
-  allocation of a shard and its replicas. For example, let's say we have
-  defined an attribute ``rack_id`` and we start 2 nodes with
-  ``node.attr.rack_id`` set to rack_one, and deploy a single table with 5
-  shards and 1 replica. The table will be fully deployed on the current nodes
-  (5 shards and 1 replica each, total of 10 shards).
-
-  Now, if we start two more nodes, with ``node.attr.rack_id`` set to rack_two,
-  shards will relocate to even the number of shards across the nodes, but a
-  shard and its replica will not be allocated in the same rack_id value.
-
-  The awareness attributes can hold several values
-
-.. _cluster.routing.allocation.awareness.force.*.values:
-
-``cluster.routing.allocation.awareness.force.\*.values`` : (default: none; runtime: no)
-  Attributes on which shard allocation will be forced. ``*`` is a placeholder
-  for the awareness attribute, which can be defined using the
-  `cluster.routing.allocation.awareness.attributes`_ setting. Let's say we
-  configured an awareness attribute ``zone`` and the values ``zone1, zone2``
-  here, start 2 nodes with ``node.attr.zone`` set to ``zone1`` and create a
-  table with 5 shards and 1 replica. The table will be created, but only 5
-  shards will be allocated (with no replicas). Only when we start more shards
-  with ``node.attr.zone`` set to ``zone2`` the replicas will be allocated.
-
-Balanced Shards
-...............
+.. _conf-allocation-balancing:
 
 All these values are relative to one another. The first three are used to
 compose a three separate weighting functions into one. The cluster is balanced
@@ -604,35 +564,10 @@ to forced awareness or allocation filtering.
   negative float). Increasing this value will cause the cluster to be less
   aggressive about optimising the shard balance.
 
-Cluster-Wide Allocation Filtering
-.................................
+.. _conf-allocation-disk:
 
-Allow to control the allocation of all shards based on include/exclude filters.
-
-E.g. this could be used to allocate all the new shards on the nodes with
-specific IP addresses or custom attributes.
-
-.. _cluster.routing.allocation.include.*:
-
-``cluster.routing.allocation.include.*`` : (default: none; runtime: no)
-  Place new shards only on nodes where one of the specified values matches the
-  attribute. e.g.: cluster.routing.allocation.include.zone: "zone1,zone2"
-
-.. _cluster.routing.allocation.exclude.*:
-
-``cluster.routing.allocation.exclude.*`` : (default: none; runtime: no)
-  Place new shards only on nodes where none of the specified values matches the
-  attribute. e.g.: cluster.routing.allocation.exclude.zone: "zone1"
-
-.. _cluster.routing.allocation.require.*:
-
-``cluster.routing.allocation.require.*`` : (default: none; runtime: no)
-  Used to specify a number of rules, which all MUST match for a node in order
-  to allocate a shard on it. This is in contrast to include which will include
-  a node if ANY rule matches.
-
-Disk-based Shard Allocation
-...........................
+Disk Usage
+..........
 
 .. _cluster.routing.allocation.disk.threshold_enabled:
 
@@ -676,8 +611,112 @@ By default, the cluster will retrieve information about the disk usage of the
 nodes every 30 seconds. This can also be changed by setting the
 `cluster.info.update.interval`_ setting.
 
+Node Attributes
+...............
+
+.. _conf-allocation-awareness:
+
+Cluster allocation awareness allows to configure shard and replicas allocation
+across generic attributes associated with nodes.
+
+.. _cluster.routing.allocation.awareness.attributes:
+
+``cluster.routing.allocation.awareness.attributes`` : (default: none; runtime: no)
+  Define node attributes which will be used to do awareness based on the
+  allocation of a shard and its replicas. For example, let's say we have
+  defined an attribute ``rack_id`` and we start 2 nodes with
+  ``node.attr.rack_id`` set to rack_one, and deploy a single table with 5
+  shards and 1 replica. The table will be fully deployed on the current nodes
+  (5 shards and 1 replica each, total of 10 shards).
+
+  Now, if we start two more nodes, with ``node.attr.rack_id`` set to rack_two,
+  shards will relocate to even the number of shards across the nodes, but a
+  shard and its replica will not be allocated in the same rack_id value.
+
+  The awareness attributes can hold several values
+
+.. _cluster.routing.allocation.awareness.force.*.values:
+
+``cluster.routing.allocation.awareness.force.\*.values`` : (default: none; runtime: no)
+  Attributes on which shard allocation will be forced. ``*`` is a placeholder
+  for the awareness attribute, which can be defined using the
+  `cluster.routing.allocation.awareness.attributes`_ setting. Let's say we
+  configured an awareness attribute ``zone`` and the values ``zone1, zone2``
+  here, start 2 nodes with ``node.attr.zone`` set to ``zone1`` and create a
+  table with 5 shards and 1 replica. The table will be created, but only 5
+  shards will be allocated (with no replicas). Only when we start more shards
+  with ``node.attr.zone`` set to ``zone2`` the replicas will be allocated.
+
+Allow to control the allocation of all shards based on include/exclude filters.
+
+E.g. this could be used to allocate all the new shards on the nodes with
+specific IP addresses or custom attributes.
+
+.. _cluster.routing.allocation.include.*:
+
+``cluster.routing.allocation.include.*`` : (default: none; runtime: no)
+  Place new shards only on nodes where one of the specified values matches the
+  attribute. e.g.: cluster.routing.allocation.include.zone: "zone1,zone2"
+
+.. _cluster.routing.allocation.exclude.*:
+
+``cluster.routing.allocation.exclude.*`` : (default: none; runtime: no)
+  Place new shards only on nodes where none of the specified values matches the
+  attribute. e.g.: cluster.routing.allocation.exclude.zone: "zone1"
+
+.. _cluster.routing.allocation.require.*:
+
+``cluster.routing.allocation.require.*`` : (default: none; runtime: no)
+  Used to specify a number of rules, which all MUST match for a node in order
+  to allocate a shard on it. This is in contrast to include which will include
+  a node if ANY rule matches.
+
+Rebalancing
+-----------
+
+.. _cluster.routing.rebalance.enable:
+
+``cluster.routing.rebalance.enable`` : (default: ``all``; runtime: yes)
+  *Allowed Values:* ``all | none | primaries | replicas``
+
+  Enables/Disables rebalancing for different types of shards.
+
+  ``all`` allows shard rebalancing for all types of shards.
+
+  ``none`` disables shard rebalancing for any types.
+
+  ``primaries`` allows shard rebalancing only for primary shards.
+
+  ``replicas`` allows shard rebalancing only for replica shards.
+
+.. _cluster.routing.allocation.allow_rebalance:
+
+``cluster.routing.allocation.allow_rebalance`` : (default: ``indices_all_active``; runtime: yes)
+  *Allowed Values:* ``always | indices_primary_active | indices_all_active``
+
+  Allow to control when rebalancing will happen based on the total state of all
+  the indices shards in the cluster. Defaulting to ``indices_all_active`` to
+  reduce chatter during initial recovery.
+
+.. _cluster.routing.allocation.cluster_concurrent_rebalance:
+
+``cluster.routing.allocation.cluster_concurrent_rebalance`` : (default: ``2``; runtime: yes)
+  Define how many concurrent rebalancing tasks are allowed cluster wide.
+
 Recovery
 --------
+
+.. _cluster.routing.allocation.node_initial_primaries_recoveries:
+
+``cluster.routing.allocation.node_initial_primaries_recoveries`` : (default: ``4``; runtime: yes)
+  Define the number of initial recoveries of primaries that are allowed per
+  node. Since most times local gateway is used, those should be fast and we can
+  handle more of those per node without creating load.
+
+.. _cluster.routing.allocation.node_concurrent_recoveries:
+
+``cluster.routing.allocation.node_concurrent_recoveries`` : (default: ``2``; runtime: yes)
+  How many concurrent recoveries are allowed to happen on a node.
 
 .. _indices.recovery.max_bytes_per_sec:
 
@@ -719,8 +758,8 @@ Recovery
   fail. Defaults to :ref:`internal_action_long_timeout
   <indices.recovery.internal_action_long_timeout>`.
 
-Graceful Stop
--------------
+Shutdown Behavior
+-----------------
 
 By default, when the CrateDB process stops it simply shuts down, possibly
 making some shards unavailable which leads to a *red* cluster state and lets
@@ -787,8 +826,8 @@ Resource Limits
 
 .. _conf-node-func-query-limits:
 
-Query Limits
-------------
+Requests
+--------
 
 .. _indices.query.bool.max_clause_count:
 
@@ -803,11 +842,6 @@ Query Limits
     ``ANY`` operators on arrays of that length can lead to heavy memory,
     consumption which could cause nodes to crash with OutOfMemory exceptions.
 
-.. _conf_bulk_operations:
-
-Bulk Operations
----------------
-
 SQL DML Statements involving a huge amount of rows like :ref:`copy_from`,
 :ref:`ref-insert` or :ref:`ref-update` can take an enormous amount of time and
 resources. The following settings change the behaviour of those queries.
@@ -821,8 +855,7 @@ resources. The following settings change the behaviour of those queries.
 Circuit Breakers
 ----------------
 
-Query Circuit Breaker
-.....................
+.. rubric:: Queries
 
 The Query circuit breaker will keep track of the used memory during the
 execution of a query. If a query consumes too much memory or if the cluster is
@@ -839,8 +872,7 @@ keeps working.
   A constant that all data estimations are multiplied with to determine a final
   estimation.
 
-Field Data Circuit Breaker
-..........................
+.. rubric:: Field Data
 
 The field data circuit breaker allows estimation of needed heap memory required
 for loading field data into memory. If a certain limit is reached an exception
@@ -853,8 +885,7 @@ is raised.
   A constant that all field data estimations are multiplied with to determine a
   final estimation.
 
-Request Circuit Breaker
-.......................
+.. rubric:: Requests
 
 The request circuit breaker allows an estimation of required heap memory per
 request. If a single request exceeds the specified amount of memory, an
@@ -869,8 +900,7 @@ exception is raised.
 
 .. _stats.breaker.log:
 
-Stats Circuit Breakers
-......................
+.. rubric:: Statistics
 
 Settings that control the behaviour of the stats circuit breaker. There are two
 breakers in place, one for the jobs log and one for the operations log. For
@@ -914,8 +944,7 @@ are proportional to the workload.
 If the type of a thread pool is set to ``fixed`` there are a few optional
 settings.
 
-Index
-.....
+.. rubric:: Index
 
 For index/delete operations.
 
@@ -929,8 +958,7 @@ For index/delete operations.
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
-Search
-......
+.. rubric:: Search
 
 For count/search operations
 
@@ -944,8 +972,7 @@ For count/search operations
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
-Get
-...
+.. rubric:: Get
 
 For queries that are optimized to do a direct lookup by primary key.
 
@@ -959,8 +986,7 @@ For queries that are optimized to do a direct lookup by primary key.
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
-Bulk
-....
+.. rubric:: Bulk
 
 For bulk operations
 
@@ -974,8 +1000,7 @@ For bulk operations
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
-Refresh
-.......
+.. rubric:: Refresh
 
 For refresh operations
 
@@ -991,3 +1016,7 @@ For refresh operations
 
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
+
+.. _`Enterprise Edition`: https://crate.io/enterprise-edition/
+.. _`Azure Portal`: https://portal.azure.com
+.. _`Active Directory application`: https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal-cli/#_create-ad-application-with-password

@@ -27,10 +27,10 @@ Each setting specifies a default value.
 
 .. _conf-node-basics:
 
-Basics
-======
+General
+=======
 
-.. _conf-node-basics-type:
+.. _conf-node-type:
 
 Node Type
 ---------
@@ -69,7 +69,7 @@ The four types of node possible are:
 Nodes marked as ``node.master`` will only handle cluster management loads if
 they are elected as the cluster master. All other loads are shared equally.
 
-.. _conf-node-basics-membership:
+.. _conf-cluster-membership:
 
 Cluster Membership
 ------------------
@@ -88,7 +88,7 @@ Cluster Membership
 ``cluster.name`` : (default: ``crate``; runtime: no)
   The name of the CrateDB cluster the node should attempt to join.
 
-.. _conf-node-func-ro:
+.. _conf-ro-mode:
 
 Read-Only Mode
 --------------
@@ -99,7 +99,7 @@ Read-Only Mode
   If set to ``true``, the node will only allow SQL statements which are
   resulting in read operations.
 
-.. _conf-node-func-plugins:
+.. _conf-plugins:
 
 Plugins
 -------
@@ -111,7 +111,7 @@ Plugins
 
   If any plugin listed here is missing, the CrateDB node will fail to start.
 
-.. _conf-node-basics-attrs:
+.. _conf-custom-attrs:
 
 Custom Attributes
 -----------------
@@ -127,7 +127,7 @@ Custom attributes are not validated by CrateDB, unlike core node attributes.
 Custom attributes can, however, be :ref:`used to control shard allocation
 <conf-routing-allocation-awareness>`.
 
-.. _conf-node-func-es-api:
+.. _conf-es-api:
 
 Elasticsearch HTTP API
 ----------------------
@@ -144,12 +144,12 @@ Elasticsearch HTTP API
     Manipulating your data via elasticsearch API and not via SQL might result
     in inconsistent data. You have been warned!
 
-.. _conf-node-os:
+.. _conf-os:
 
 Operating System
 ================
 
-.. _conf-node-os-fs:
+.. _conf-fs:
 
 File System
 -----------
@@ -210,97 +210,15 @@ File System
   By default blobs will be stored under the same path as normal data. A
   relative path value is interpreted as relative to ``CRATE_HOME``.
 
-.. _conf-node-os-cpu:
 
-CPU
----
-
-.. _processors:
-
-``processors`` : (default: guessed; runtime: no)
-  The number of available processes is automatically guessed, and so most of
-  the time you will not need to configure this explicitly.
-
-  However, in some situations, such as when CrateDB is being run on top of
-  Docker, the number of processors may be guessed incorrectly. If this happens,
-  you can manually configure the number of processors using this setting.
-
-  You can also use this setting to manually constrain the number of CPUs made
-  available to CrateDB. You might want to do this if you're running CrateDB in
-  a multitenant setup (i.e. more than one CrateDB node running on the same
-  hardware).
-
-.. _conf-node-os-mem:
-
-Memory
-------
-
-.. _conf-node-os-mem-lock:
-
-Memory Lock
-...........
-
-.. _bootstrap.memory_lock:
-
-``bootstrap.memory_lock`` : (default: ``false``; runtime: no)
-  CrateDB performs poorly when the JVM starts swapping: you should ensure that
-  it *never* swaps. If set to ``true``, CrateDB will use the ``mlockall``
-  system call on startup to ensure that the memory pages of the CrateDB process
-  are locked into RAM.
-
-.. _conf-node-os-mem-gc:
-
-Garbage Collection
-..................
-
-CrateDB logs if JVM garbage collection on different memory pools takes too
-long. The following settings can be used to adjust these timeouts:
-
-.. _monitor.jvm.gc.collector.young.warn:
-
-``monitor.jvm.gc.collector.young.warn`` : (default: ``1000ms``; runtime: no)
-  CrateDB will log a warning message if it takes more than the configured
-  timespan to collect the *Eden Space* (heap).
-
-.. _monitor.jvm.gc.collector.young.info:
-
-``monitor.jvm.gc.collector.young.info`` : (default: ``700ms``; runtime: no)
-  CrateDB will log an info message if it takes more than the configured
-  timespan to collect the *Eden Space* (heap).
-
-.. _monitor.jvm.gc.collector.young.debug:
-
-``monitor.jvm.gc.collector.young.debug`` : (default: ``400ms``; runtime: no)
-  CrateDB will log a debug message if it takes more than the configured
-  timespan to collect the *Eden Space* (heap).
-
-.. _monitor.jvm.gc.collector.old.warn:
-
-``monitor.jvm.gc.collector.old.warn`` : (default: ``10000ms``; runtime: no)
-  CrateDB will log a warning message if it takes more than the configured
-  timespan to collect the *Old Gen* / *Tenured Gen* (heap).
-
-.. _monitor.jvm.gc.collector.old.info:
-
-``monitor.jvm.gc.collector.old.info`` : (default: ``5000ms``; runtime: no)
-  CrateDB will log an info message if it takes more than the configured
-  timespan to collect the *Old Gen* / *Tenured Gen* (heap).
-
-.. _monitor.jvm.gc.collector.old.debug:
-
-``monitor.jvm.gc.collector.old.debug`` : (default: ``2000ms``; runtime: no)
-  CrateDB will log a debug message if it takes more than the configured
-  timespan to collect the *Old Gen* / *Tenured Gen* (heap).
-
-.. _conf-node-os-net:
+.. _conf-net:
 
 Network
 -------
 
-.. _conf-node-os-net-hosts:
+.. _conf-hosts:
 
-Hosts
-.....
+.. rubric:: Hosts
 
 .. _network.host:
 
@@ -335,10 +253,9 @@ Hosts
                                ``_en0_``.
     =========================  =================================================
 
-.. _conf-node-os-net-ports:
+.. _conf-ports:
 
-Ports
-.....
+.. rubric:: Ports
 
 .. _http.port:
 
@@ -385,7 +302,84 @@ Ports
   range is used. If this is set to an integer value it is considered as an
   explicit single port.
 
-.. _conf-node-os-multi:
+.. _conf-cpu:
+
+CPU
+---
+
+.. _processors:
+
+``processors`` : (default: guessed; runtime: no)
+  The number of available processes is automatically guessed, and so most of
+  the time you will not need to configure this explicitly.
+
+  However, in some situations, such as when CrateDB is being run on top of
+  Docker, the number of processors may be guessed incorrectly. If this happens,
+  you can manually configure the number of processors using this setting.
+
+  You can also use this setting to manually constrain the number of CPUs made
+  available to CrateDB. You might want to do this if you're running CrateDB in
+  a multitenant setup (i.e. more than one CrateDB node running on the same
+  hardware).
+
+.. _conf-mem:
+
+Memory
+------
+
+.. _bootstrap.memory_lock:
+
+``bootstrap.memory_lock`` : (default: ``false``; runtime: no)
+  CrateDB performs poorly when the JVM starts swapping: you should ensure that
+  it *never* swaps. If set to ``true``, CrateDB will use the ``mlockall``
+  system call on startup to ensure that the memory pages of the CrateDB process
+  are locked into RAM.
+
+.. _conf-gc:
+
+Garbage Collection
+..................
+
+CrateDB logs if JVM garbage collection on different memory pools takes too
+long. The following settings can be used to adjust these timeouts:
+
+.. _monitor.jvm.gc.collector.young.warn:
+
+``monitor.jvm.gc.collector.young.warn`` : (default: ``1000ms``; runtime: no)
+  CrateDB will log a warning message if it takes more than the configured
+  timespan to collect the *Eden Space* (heap).
+
+.. _monitor.jvm.gc.collector.young.info:
+
+``monitor.jvm.gc.collector.young.info`` : (default: ``700ms``; runtime: no)
+  CrateDB will log an info message if it takes more than the configured
+  timespan to collect the *Eden Space* (heap).
+
+.. _monitor.jvm.gc.collector.young.debug:
+
+``monitor.jvm.gc.collector.young.debug`` : (default: ``400ms``; runtime: no)
+  CrateDB will log a debug message if it takes more than the configured
+  timespan to collect the *Eden Space* (heap).
+
+.. _monitor.jvm.gc.collector.old.warn:
+
+``monitor.jvm.gc.collector.old.warn`` : (default: ``10000ms``; runtime: no)
+  CrateDB will log a warning message if it takes more than the configured
+  timespan to collect the *Old Gen* / *Tenured Gen* (heap).
+
+.. _monitor.jvm.gc.collector.old.info:
+
+``monitor.jvm.gc.collector.old.info`` : (default: ``5000ms``; runtime: no)
+  CrateDB will log an info message if it takes more than the configured
+  timespan to collect the *Old Gen* / *Tenured Gen* (heap).
+
+.. _monitor.jvm.gc.collector.old.debug:
+
+``monitor.jvm.gc.collector.old.debug`` : (default: ``2000ms``; runtime: no)
+  CrateDB will log a debug message if it takes more than the configured
+  timespan to collect the *Old Gen* / *Tenured Gen* (heap).
+
+.. _conf-multi:
 
 Multitenancy
 ------------
@@ -396,16 +390,10 @@ Multitenancy
   Defines how many nodes are allowed to be started on the same machine using
   the same configured data path defined via `path.data`_.
 
-
-.. _conf-node-snapshots:
+.. _conf-snapshots:
 
 Snapshots
 =========
-
-.. _conf-node-snapshots-repos:
-
-Repositories
-------------
 
 Repositories are used to :ref:`backup <snapshot-restore>` a CrateDB cluster.
 
@@ -437,10 +425,10 @@ Repositories are used to :ref:`backup <snapshot-restore>` a CrateDB cluster.
 
 See also the :ref:`path.repo <conf-path-repo>` Setting.
 
-.. _s3-credentials:
+.. _conf-repos-s3:
 
-Credentials for S3 Repositories
--------------------------------
+S3 Repositories
+---------------
 
 CrateDB has built-in support for configuring
 :ref:`S3 buckets as repositories for snapshots
@@ -466,12 +454,12 @@ to the SQL statement the following default credentials will be used:
    SQL statement, then those credentials will be visible as plain text to
    anyone querying the :ref:`sys.repositories table <sys-repositories>`.
 
-.. _conf-node-sec:
+.. _conf-sec:
 
 Security
 ========
 
-.. _conf-node-sec-auth:
+.. _conf-auth:
 
 Authentication
 --------------
@@ -480,7 +468,7 @@ Authentication
 
     Authentication is an :ref:`enterprise feature <enterprise_features>`.
 
-.. _conf-node-sec-auth-trust:
+.. _conf-trust-auth:
 
 Trust Authentication
 ....................
@@ -492,10 +480,10 @@ Trust Authentication
   to CrateDB via HTTP protocol and they do not specify a user via the
   ``Authorization`` request header.
 
-.. _conf-node-sec-auth-hba:
+.. _conf-hba:
 
-Host Based Authentication
-.........................
+Host Based Authentication (HBA)
+...............................
 
 Authentication settings (``auth.host_based.*``) are node settings, which means
 that their values apply only to the node where they are applied and different
@@ -507,7 +495,7 @@ nodes may have different authentication settings.
   Setting to enable or disable Host Based Authentication (HBA). It is disabled
   by default.
 
-.. _conf-node-sec-auth-hba-entries:
+.. _conf-hba-entries:
 
 HBA Entries
 ```````````
@@ -592,7 +580,7 @@ The meaning of the fields of the are as follows:
         protocol: pg
         ssl: on
 
-.. _conf-node-sec-ssl:
+.. _conf-ssl:
 
 Transport Layer Security (SSL/TLS)
 ----------------------------------
@@ -656,7 +644,7 @@ Layer Security (TLS).
   The password used to decrypt the truststore file defined with
   ``ssl.truststore_filepath``.
 
-.. _conf-node-sec-cors:
+.. _conf-cors:
 
 Cross-Origin Resource Sharing (CORS)
 ------------------------------------
@@ -701,7 +689,6 @@ sharing`_ settings in CrateDB allow for configuring these.
 ``http.cors.allow-credentials`` : (default: ``false``; runtime: no)
   Add the ``Access-Control-Allow-Credentials`` header to responses.
 
-.. _`Enterprise Edition`: https://crate.io/enterprise-edition/
 .. _`JarURLConnection documentation`: http://docs.oracle.com/javase/8/docs/api/java/net/JarURLConnection.html
 .. _cross-origin resource sharing: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 .. _same-origin policy: https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy
