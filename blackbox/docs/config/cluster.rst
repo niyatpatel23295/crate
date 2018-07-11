@@ -1041,6 +1041,6 @@ For refresh operations
   Size of the queue for pending requests. A value of ``-1`` sets it to
   unbounded.
 
-.. _`Enterprise Edition`: https://crate.io/enterprise-edition/
-.. _`Azure Portal`: https://portal.azure.com
 .. _`Active Directory application`: https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal-cli/#_create-ad-application-with-password
+.. _`Azure Portal`: https://portal.azure.com
+.. _`Enterprise Edition`: https://crate.io/enterprise-edition/
